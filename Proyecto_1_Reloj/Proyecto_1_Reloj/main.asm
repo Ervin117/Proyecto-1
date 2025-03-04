@@ -5,7 +5,7 @@
 ; Author : Ervin Gomez 231226
 ;
 
-.include "M328DEF.inc"
+.include "M328PDEF.inc"
 .cseg
 .org	0x0000
 	JMP		START
@@ -27,6 +27,9 @@
 
 TABLA7SEG:	.DB		0x7E, 0x30, 0x6D, 0x79, 0x33, 0x5B, 0x5F, 0x70, 0x7F, 0x7B //Orden de los numeros
 					//0	   1	 2	    3	  4	    5    6     7	  8	    9	 
+MES_DIA:	.DB		31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+				  //EN	FEB	MAR	ABR MAY	JUN JUL	AGS	SEP	OCT	NOV	DEC 	
+
 
 START: 
 	//Configuración de la pila 
@@ -61,8 +64,20 @@ SETUP:
 	CBI		DDRB, PB1 
 	CBI		PORTB, PB0
 	CBI		PORTB, PB1
-	//CBI		PORTB, PB2
-	//CBI		PORTB, PB3
+	CBI		DDRB, PB2
+	CBI		DDRB, PB3 
+	CBI		PORTB, PB2
+	CBI		PORTB, PB3
+
+	//Les de modos 
+	SBI		DDRC, PC3
+	SBI		DDRC, PC4
+
+	//Leds Reloj 
+	SBI		DDRB, PB5
+
+	//Busser
+	SBI		DDRB, PB4
 
 	//Se establece PORTD la salida de los Displays
 	LDI		R16, 0xFF
@@ -116,6 +131,10 @@ MAIN:
 HRS: 
 	//Poner en los displays el valor de las horas
 	//logica para mostrar las horas 
+	CPI		R16, 0x00
+	BREQ	DIS1
+	CPI		R16, 0x01
+	BREQ	DIS2
 	RJMP	MAIN
 
 FCH: 
@@ -176,17 +195,57 @@ RELOJ_7SEG:
 	IN		R16, SREG
 	PUSH	R16
 
-	//SBI		TIFR0, TOV0
-	//LDI		R16, 100
-	//OUT		TCNT0, R16
-	//INC		R20
 	LDI		R16, HIGH(T1Value)
 	STS		TCNT1H, R16
 	LDI		R16, LOW(T1Value)
-	STS		TCNT1L, R16
-	CPI		R20, 100 //Ahora seria de un 1minuto por un minuto
+	STS		TCNT1L, R16 //La interrupción ocurre cada minuto o 60s
+	INC		R19
+	CPI		R19, 0x0A //Unidades de minutos 
+	BRNE	FIN1
+	LDI		R19, 0x00 
+	INC		R20
+	CPI		R20, 0x06 //Decenas de minutos 
+	BRNE	FIN1
+	LDI		R20, 0x00
+	INC		R21
+	CPI		R21, 0x0A //Unidades de horas
+	BRNE	FIN1
+	CPI		R23, 0x02 //Decenas de horas
+	BRLO	RESET_HRS
+	CPI		R21, 0x04
+	BRNE	FIN1
+	
+	//LDI		R21, 0x00
+	//INC		R23
+	//CPI		R23, 0x02
 
+RESET_HRS: 
+	CLR		R21 // O PUEDE SER LDI
+	INC		R23
+	CPI		R23, 0x03
+	BRNE	FIN1
+	CLR		R23	// O PUEDE SER LDI	
+	INC		R24	//Unidades de dias
 
+	LDI		ZL, MES_DIA
+	ADD		ZL, R26
+	LPM		R16, Z
+	CPI		R24, 0x0A
+	BRNE	FIN1
+	CLR		R24
+	INC		R25
+	CP		R25, R16
+	BRLO	FIN1
+
+RESET_DIAS: 
+	CLR		R24
+	CLR		R25
+	INC		R26
+	CPI		R26, 0x0D
+	BRNE	FIN1
+	CLR		R26
+
+FIN1:
 	POP		R16
 	OUT		SREG, R16
 	POP		R16
@@ -205,7 +264,7 @@ TNSTR:
 	INC		R20
 	CPI		R20, 100 //Ahora seria de un 500ms, se enciende las leds del medio 
 
-
+FIN2:
 	POP		R16
 	OUT		SREG, R16
 	POP		R16
@@ -215,7 +274,7 @@ TNSTR:
 //******************** LOGICA PARA LAS CONFIGURACIONES DEL RELOJ ***********************//
 BOTONES: 
 	PUSH	R16
-	IN		R16, SERG
+	IN		R16, SREG
 	PUSH	R16
 
 	SBIS	PINB, PB0 //Ver si fue presionado, y cual es su valor para ver en cual modo estar 
@@ -224,7 +283,7 @@ BOTONES:
 	CPI		MOD, 0x07
 	BRNE	MODOS
 	CLR		MOD
-	RJMP	FIN
+	RJMP	FIN3
 
 MODOS: 
 	CPI		MOD, 1
@@ -239,27 +298,27 @@ MODOS:
 	BREQ	CONF_ALR_ISR
 	CPI		MOD, 6
 	BREQ	APG_ALR_ISR
-	RJMP	FIN
+	RJMP	FIN3
 
 HRS_ISR:
-	RJMP	FIN
+	RJMP	FIN3
 
 FCH_ISR:
-	RJMP	FIN
+	RJMP	FIN3
 
 CONF_HRS_ISR:	
-	RJMP	FIN
+	RJMP	FIN3
 
 CONF_FCH_ISR:
-	RJMP	FIN
+	RJMP	FIN3
 
 CONF_ALR_ISR:
-	RJMP	FIN
+	RJMP	FIN3
 
 APG_ALR_ISR:
-	RJMP	FIN
+	RJMP	FIN3
 
-FIN: 
+FIN3: 
 	POP		R16
 	OUT		SREG, R16
 	POP		R16
