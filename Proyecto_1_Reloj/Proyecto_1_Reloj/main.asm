@@ -12,23 +12,26 @@
 .org	PCI2addr
 	JMP		BOTONES
 
-//.org	OVF2addr
-	//JMP		LEDS1
+.org	OVF2addr
+	JMP		LEDS1
 
 .org	OVF1addr
 	JMP		RELOJ_7SEG
 
-//.org	OVF0addr
-	//JMP		TNSTR
+.org	OVF0addr
+	JMP		TNSTR
 
-.equ T1Value = 0xE17B
+.equ T1Value = 0x1B1E
+.equ T0Value = 0xFF
+.equ T2Value = 0xCF
 .def MOD = R17
-.def ACT = R18	
+.def ACT = R24
+.def MESES = R21
 
 TABLA7SEG:	.DB		0x7E, 0x30, 0x6D, 0x79, 0x33, 0x5B, 0x5F, 0x70, 0x7F, 0x7B //Orden de los numeros
 					//0	   1	 2	    3	  4	    5    6     7	  8	    9	 
-MES_DIA:	.DB		31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-				  //EN	FEB	MAR	ABR MAY	JUN JUL	AGS	SEP	OCT	NOV	DEC 	
+MES_DIA:	.DB		0x31, 0x28, 0x31, 0x30, 0x31, 0x30, 0x31, 0x31, 0x30, 0x31, 0x30, 0x31
+				   //EN	  FEB	 MAR   ABR   MAY   JUN   JUL   AGS	 SEP   OCT	 NOV   DEC 	
 
 
 START: 
@@ -40,43 +43,60 @@ START:
 
 SETUP: 
 	CLI		
-	//Configuración del Prescaler TIMER1
+	//Configuración del Prescaler del oscilador
 	LDI		R16, (1<< CLKPCE)
 	STS 	CLKPR, R16 
 	LDI		R16, (1<< CLKPS2) 
 	STS		CLKPR, R16
 
-	//LDI		R16, (1<<CS01) | (1<<CS00)
-	//OUT		TCCR0B, R16
-	//LDI		R16, 100
-	//OUT		TCNT0, R16
+	//Configuracion TIMER0
+	LDI		R16, (1<<CS02) | (1<<CS00)
+	OUT		TCCR0B, R16
+	LDI		R16, T0Value
+	OUT		TCNT0, R16
+
+	//Configuracion TIMER1
+	LDI		R16, (1 << CS12) | (1 << CS10)
+	STS		TCCR1B, R16
+
+	LDI		R16, HIGH(T1Value)
+	STS		TCNT1H, R16
+	LDI		R16, LOW(T1Value)
+	STS		TCNT1L, R16
+
+	//Configuracion TIMER2
+	LDI		R16, (1<<CS22) | (1<<CS21) | (1<<CS20)
+	STS		TCCR2B, R16
+	LDI		R16, T2Value
+	STS		TCNT2, R16
 
 	//PORTC como entradas botones
-	CBI		DDRC, PC0
-	CBI		DDRC, PC1
-	CBI		DDRC, PC2
-	SBI		DDRC, PC0
-	SBI		DDRC, PC1
-	SBI		DDRC, PC2
+	CBI		DDRC, PC0 //Cambio de MODOS	
+	CBI		DDRC, PC1 //Solo incrementos 
+	CBI		DDRC, PC2 //Solo decrementos 
+	SBI		PORTC, PC0
+	SBI		PORTC, PC1
+	SBI		PORTC, PC2
 
 	//Pines para los transistores (MULTIPLEXACION)
-	CBI		DDRB, PB0
-	CBI		DDRB, PB1 
-	CBI		PORTB, PB0
-	CBI		PORTB, PB1
-	CBI		DDRB, PB2
-	CBI		DDRB, PB3 
+	CBI		DDRB, PB0 //Display 1
+	CBI		DDRB, PB1 //Display 2
+	CBI		DDRB, PB2 //Display 3
+	CBI		DDRB, PB3 //Display 4
 	CBI		PORTB, PB2
 	CBI		PORTB, PB3
+	CBI		PORTB, PB0
+	CBI		PORTB, PB1
 
 	//Les de modos 
 	SBI		DDRC, PC3
 	SBI		DDRC, PC4
+	SBI		DDRC, PC5
 
 	//Leds Reloj 
 	SBI		DDRB, PB5
 
-	//Busser
+	//Busser (Alarma)
 	SBI		DDRB, PB4
 
 	//Se establece PORTD la salida de los Displays
@@ -85,23 +105,23 @@ SETUP:
 	LDI		R16, 0x00
 	OUT		PORTD, R16
 
-	CALL	INI_TMR1
 	CALL	INICIO
 
+	//Se desactiva los puertos seriales 
 	LDI		R16, 0x00
 	STS		UCSR0B, R16
 
-	//Configuraciones de interrupciones TIMER0
-	//LDI		R16, (1 <<TOIE0)
-	//STS		TIMSK0, R16
-	//LDI		R16, (1<< PCINT0) | (1<< PCINT1)
-	//STS		PCMSK0, R16
-	//LDI		R16, (1<< PCIE0)
-	//STS		PCICR, R16
-
+	//Interrupciones TIMER0
+	LDI		R16, (1 <<TOIE0)
+	STS		TIMSK0, R16
+	
 	//Interrupcion del TMR1
 	LDI		R16, (1 <<TOIE1)
 	STS		TIMSK1, R16
+
+	//Interrupcion del TMR2
+	LDI		R16, (1 << TOIE2)
+	STS		TIMSK2, R16
 
 	//Interrpción Pin Change
 	LDI	R16, (1 << PCINT9) | (1 << PCINT8) | (1 << PCINT10)
@@ -109,65 +129,758 @@ SETUP:
 	LDI	R16, (1 << PCIE1)
 	STS	PCICR, R16
 
+	//Limpiar Registros
+	CLR		R9	//UNIDADES DE MINUTOS
+	CLR		R2	//DECENAS DE MINUTOS 
+	CLR		R3	//UNIDADES DE HORAS
+	CLR		R4	//DECENAS DE HORAS
+	CLR		R5	//UNIDADES DE DIAS
+	CLR		R6	//DECENAS DE DIAS
+	CLR		R7	//UNIDADES DE MES 
+	CLR		R8	//DECENAS DE MES 
+	CLR		R10	//UNIDADES DE MINUTOS (ALARMA)
+	CLR		R11	//DECENAS DE MINUTOS (ALARMA 
+	CLR		R12	//UNIDADES DE HORAS	(ALARMA)
+	CLR		R13	//DECENAS DE HORAS (ALARMA) 
+	CLR		R14
+	CLR		R15
+	CLR		R16	//PROPOSITO GENERAL 
+	CLR		R17	//MODOS
+	CLR		R18	
+	CLR		R19	
+	CLR		R20	//LEER BOTONES 
+	CLR		R21 //VARIABLE MESES (PARA LOGICA)
+	CLR		R22	//REGISTRO PARA GUARDAR VARAIBLES 
+	CLR		R23	//VANDERA DE MULTPLEXACION
+	CLR		R24	//ALARMA (BANDERA DE ACTIVACION)
+	CLR		R25	
+	CLR		R26
+	CLR		R27	//LEDS INTERMINENTES
+		
 	SEI
 
+//************************************** LOGICA DE MAIN **************************************//
+//************************************** LOGICA DE MAIN **************************************//
 MAIN: 
 	//Loop infinito
 	OUT		PORTD, R22 
+	CPI		MOD, 0
+	BREQ	CALL_HRS	
 	CPI		MOD, 1
-	BREQ	HRS
+	BREQ	CALL_FCH
 	CPI		MOD, 2
-	BREQ	FCH
+	BREQ	CALL_CONF_HRS
 	CPI		MOD, 3
-	BREQ	CONF_HRS
+	BREQ	CALL_CONF_MIN 
 	CPI		MOD, 4
-	BREQ	CONF_FCH
+	BREQ	CALL_CONF_MES	//CALL_CONF_DIS
 	CPI		MOD, 5
-	BREQ	CONF_ALR
+	BREQ	CALL_CONF_DIS	//CALL_CONF_MES
 	CPI		MOD, 6
-	BREQ	APG_ALR
+	BREQ	CALL_CONF_MIN_ALR
+	CPI		MOD, 7
+	BREQ	CALL_CONF_HRS_ALR
+	CPI		MOD, 8
+	BREQ	CALL_APG_ALR
 	RJMP	MAIN
 
+CALL_HRS: 
+	CBI		PORTC, PC3
+	CBI		PORTC, PC4
+	CBI		PORTC, PC5
+	CALL	HRS
+	RJMP	MAIN
+CALL_FCH: 
+	CBI		PORTC, PC3
+	CBI		PORTC, PC4
+	SBI		PORTC, PC5
+	CALL	FCH
+	RJMP	MAIN
+CALL_CONF_HRS: 
+	CBI		PORTC, PC3
+	SBI		PORTC, PC4
+	CBI		PORTC, PC5
+	CALL	CONF_HRS
+	RJMP	MAIN
+CALL_CONF_MIN: 
+	CBI		PORTC, PC3
+	SBI		PORTC, PC4
+	SBI		PORTC, PC5
+	CALL	CONF_MIN
+	RJMP	MAIN
+CALL_CONF_MES:
+	SBI		PORTC, PC3
+	CBI		PORTC, PC4
+	CBI		PORTC, PC5
+	CALL	CONF_MES
+	RJMP	MAIN
+CALL_CONF_DIS: 
+	SBI		PORTC, PC3
+	CBI		PORTC, PC4
+	SBI		PORTC, PC5
+	CALL	CONF_DIS
+	RJMP	MAIN
+CALL_CONF_MIN_ALR: 
+	SBI		PORTC, PC3
+	SBI		PORTC, PC4
+	CBI		PORTC, PC5
+	CALL	CONF_ALR_MIN
+	RJMP	MAIN
+CALL_CONF_HRS_ALR: 
+	SBI		PORTC, PC3
+	SBI		PORTC, PC4
+	SBI		PORTC, PC5
+	CALL	CONF_ALR_HRS
+CALL_APG_ALR: 
+	CBI		PORTC, PC3
+	CBI		PORTC, PC4
+	CBI		PORTC, PC5
+	SBI		PORTB, PB5
+	CALL	APG_ALR
+	RJMP	MAIN 
+
+
+//**********Poner en los displays el valor de las horas y minutos**********//
 HRS: 
-	//Poner en los displays el valor de las horas
-	//logica para mostrar las horas 
-	CPI		R16, 0x00
+	LDI		R16, (1 << TOIE1)
+	STS		TIMSK1, R16	
+	CPI		R23, 0x01 
 	BREQ	DIS1
-	CPI		R16, 0x01
+	CPI		R23, 0x02
 	BREQ	DIS2
-	RJMP	MAIN
+	CPI		R23, 0x03
+	BREQ	DIS3
+	CPI		R23, 0x04
+	BREQ	DIS4
+	CPI		ACT, 0x01
+	BREQ	ALARMA_ON
+	RET
 
+ALARMA_ON: 
+	CALL	CALL_ALR_ON
+	RJMP	HRS
+
+	DIS1:
+	//UNIDADES DE MINUTOS 
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R9
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB0
+	CBI		PORTB, PB1
+	CBI		PORTB, PB2
+	SBI		PORTB, PB3
+	LDI		R23, 0x01
+	RET
+
+	DIS2:
+	//DECENAS DE MINUTOS 
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R2
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB0
+	CBI		PORTB, PB1
+	CBI		PORTB, PB3
+	SBI		PORTB, PB2
+	LDI		R23, 0x02
+	RET
+
+	DIS3:
+	//UNICADES DE HORAS
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R3
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB0
+	CBI		PORTB, PB3
+	CBI		PORTB, PB2
+	SBI		PORTB, PB1
+	LDI		R23, 0x03
+	RET
+
+	DIS4:
+	//DECENAS DE HORAS
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R4
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB3
+	CBI		PORTB, PB1
+	CBI		PORTB, PB2
+	SBI		PORTB, PB0
+	LDI		R23, 0x00
+	RET
+
+CALL_ALR_ON: 
+	CP		R9, R10
+	BRNE	OFF_BUSSER
+	CP		R2, R11
+	BRNE	OFF_BUSSER
+	CP		R3, R12
+	BRNE	OFF_BUSSER
+	CP		R4, R13
+	BRNE	OFF_BUSSER
+	SBI		PORTB, PB4
+	RJMP	SALIR
+
+OFF_BUSSER: 
+	CBI		PORTB, PB4
+SALIR: 
+	RET
+
+
+//**********Poner en los displays el valor de la fecha**********//
 FCH: 
-	//Poner en los displays el valor de la fecha
-	//logica para mostrar la fecha 
-	RJMP	MAIN
+	CPI		R23, 0x01
+	BREQ	DIS1F
+	CPI		R23, 0x02
+	BREQ	DIS2F
+	CPI		R23, 0x03
+	BREQ	DIS3F
+	CPI		R23, 0x04
+	BREQ	DIS4F
+	RET
 
+	DIS1F:
+	//UNIDADES DE MES
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R7
+	LPM		R22, Z		//TALVEZ CAMBIAR EL RET EN LOS DISPLAS
+	OUT		PORTD, R22
+	CBI		PORTB, PB0
+	CBI		PORTB, PB1
+	CBI		PORTB, PB2
+	SBI		PORTB, PB3
+	LDI		R23, 0x01
+	RET
+
+	DIS2F:
+	//DECENAS DE MES 
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R8
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB0
+	CBI		PORTB, PB1
+	CBI		PORTB, PB3
+	SBI		PORTB, PB2
+	LDI		R23, 0x02
+	RET
+
+	DIS3F:
+	//UNICADES DE DIA
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R5
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB0
+	CBI		PORTB, PB3
+	CBI		PORTB, PB2
+	SBI		PORTB, PB1
+	LDI		R23, 0x03
+	RET
+
+	DIS4F:
+	//DECENAS DE DIA
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R6
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB3
+	CBI		PORTB, PB1
+	CBI		PORTB, PB2
+	SBI		PORTB, PB0
+	LDI		R23, 0x00
+	RET
+
+//*********Logica para editar las horas**********//
 CONF_HRS: 
-	//logica para editar las horas
-	//resetear las horas
-	SBIS	PINB, PB1 //Incrementar el display 1 (unidades minutos)
+	CLR		R16
+	STS		TIMSK1, R16
+	IN		R20, PINC
+	SBIS	PINC, PC1
+	CALL	INCREMET_HRS
+	SBIS	PINC, PC2
+	CALL	DECREMENT_HRS
+	CALL	HRS
+	RET
 
-	SBIS	PINB, PB2 //Decrementar el display 1 (decenas minutos) 
-	RJMP	MAIN
+//Incrementar el display 2 (horas)
+INCREMET_HRS: 
+	MOV		R16, R4
+	CPI		R16, 0x02
+	BREQ	HRS_24
+	INC		R3
+	MOV		R16, R3
+	CPI		R16, 0x0A
+	BREQ	HRS_DEC
+	CLR		R16
+	RET
+HRS_DEC: 
+	CLR		R3
+	CLR		R16
+	INC		R4
+	RET
+HRS_24: 
+	INC		R3
+	MOV		R16, R3
+	CPI		R16, 0x04
+	BREQ	OVER_HRS
+	CLR		R16
+	RET
+OVER_HRS: 
+	CLR		R16
+	CLR		R3
+	CLR		R4
+	RET
 
-CONF_FCH: 
-	//logica para editar la fecha
-	//Resetear la fecha
-	SBIS	PINB, PB1 //Incrementar el display 1 (unidades dias)
-
-	SBIS	PINB, PB2 //Decrementar el display 1 (decenas dias) 
-	RJMP	MAIN
+//Decrementar el display 2 (horas) 
+DECREMENT_HRS: 
+	DEC		R3
+	MOV		R16, R3
+	CPI		R16, 0xFF
+	BREQ	DEC_HRS
+	RET
+DEC_HRS: 
+	LDI		R16, 0x09
+	MOV		R3, R16
+	DEC		R4
+	MOV		R16, R4
+	CPI		R16, 0xFF
+	BREQ	UNDER_HRS
+	RET
+UNDER_HRS: 
+	LDI		R16, 0x03
+	MOV		R3, R16
+	LDI		R16, 0x02
+	MOV		R4, R16
+	RET
 	
-CONF_ALR: 
-	//logica para configurar la alarma 
-	//incremento, decremento, fijado 
-	RJMP	MAIN
+	
+//**********Logica para editar los minutos*********//
+CONF_MIN: 
+	CLR		R16
+	STS		TIMSK1, R16
+	IN		R20, PINC
+	SBIS	PINC, PC1
+	CALL	INCREMET_MIN
+	SBIS	PINC, PC2
+	CALL	DECREMENT_MIN
+	CALL	HRS
+	RET
 
+//Incrementar el display 1 (minutos)
+INCREMET_MIN:
+	INC		R9
+	MOV		R16, R9
+	CPI		R16, 0x0A
+	BREQ	DEC_MIN
+	CLR		R16
+	RET
+DEC_MIN:
+	CLR		R16
+	CLR		R9
+	INC		R2
+	MOV		R16, R2
+	CPI		R16, 0x06
+	BREQ	OVER_MIN
+	RET
+OVER_MIN: 
+	CLR		R16
+	CLR		R2
+	CLR		R9
+	RET
+
+//Decrementar el display 1 (minutos) 
+DECREMENT_MIN: 
+	DEC		R9
+	MOV		R16, R9
+	CPI		R16, 0xFF
+	BREQ	DEC_REST
+	CLR		R16
+	RET	
+DEC_REST: 
+	LDI		R16, 0x09
+	MOV		R9, R16
+	DEC		R2
+	MOV		R16, R2
+	CPI		R16, 0xFF
+	BREQ	UNDER_MIN
+	CLR		R16
+	RET
+UNDER_MIN: 
+	LDI		R16, 0x09
+	MOV		R9, R16
+	LDI		R16, 0x05
+	MOV		R2, R16
+	RET	
+
+
+//**********Logica para editar los dias**********//
+CONF_DIS: 
+	IN		R20, PINC
+	SBIS	PINC, PC1
+	CALL	INCREMET_DIS
+	SBIS	PINC, PC2
+	CALL	INCREMET_DIS
+	CALL	FCH
+	RET
+
+ //Incrementar el display 2 (dias)
+INCREMET_DIS: 
+	INC     R5          
+	MOV		R16, R5
+    CPI     R16, 0x0A   
+    BRNE    CHECK_LIMIT 
+    CLR     R5          
+    INC     R6          
+
+CHECK_LIMIT:
+    LDI     ZL, LOW(MES_DIA << 1)
+    LDI     ZH, HIGH(MES_DIA << 1)
+    ADD     ZL, MESES  
+    LPM     R19, Z     
+
+    MOV     R16, R6
+    LSL     R16         
+    LSL     R16
+    LSL     R16
+    LSL     R16
+    ADD     R16, R5    
+    CP      R16, R19
+    BRLO    NO_OVERFLOW 
+    CALL    OVER_DIA   
+NO_OVERFLOW:
+    RET
+OVER_DIA:
+	LDI		R16, 0x01
+	MOV		R5, R16
+    CLR     R6       
+	RET
+
+
+//Decrementar el display 2 (dias)
+DECREMET_DIS: 
+	MOV		R16, R6
+	CPI		R16, 0x00
+	BREQ	RESET_DIA
+	DEC		R5
+	MOV		R16, R5
+	CPI		R16, 0xFF
+	BREQ	DECDIA_REST
+	RET
+DECDIA_REST: 
+	LDI		R16, 0x09
+	MOV		R5, R16
+	DEC		R6
+	RET
+RESET_DIA: 
+	DEC		R5
+	MOV		R16, R5
+	CPI		R16, 0x00
+	BREQ	UNDER_DIA
+	RET
+UNDER_DIA: 
+	LDI		ZL, LOW(MES_DIA << 1)
+	LDI		ZH, HIGH(MES_DIA << 1)
+	ADD		ZL, MESES
+	LPM		R19, Z
+	MOV		R6, R19
+	//SWAP	R6	//POSIBLE CAMBIO
+	LSL		R6
+	LSL		R6
+	LSL		R6
+	LSL		R6
+	ANDI	R19, 0x0F
+	MOV		R5, R22
+	RET
+
+//**********Logica para editar el mes**********//
+CONF_MES: 
+	IN		R20, PINC
+	SBIS	PINC, PC1
+	CALL	INCREMET_MES
+	SBIS	PINC, PC2
+	CALL	DECREMENT_MES
+	CALL	FCH
+	RET
+	
+//Incrementar el display 1 (mes)
+INCREMET_MES: 
+	INC		MESES
+	MOV		R16, R8
+	CPI		R16, 0x01
+	BREQ	SET_MES
+	INC		R7
+	MOV		R16, R7
+	CPI		R16, 0x0A
+	BREQ	SUM_DECMES
+	CLR		R16
+	RET
+SUM_DECMES: 
+	CLR		R16
+	CLR		R7
+	INC		R8
+	RET
+SET_MES: 
+	INC		R7
+	MOV		R16, R7
+	CPI		R16, 0x03
+	BREQ	OVER_MES
+	RET
+OVER_MES: 
+	CLR		MESES
+	LDI		R16, 0x01
+	MOV		R7, R16
+	CLR		R16		
+	MOV		R8, R16
+	RET
+
+//Decrementar el display 1 (mes)
+DECREMENT_MES: 
+	DEC		MESES
+	MOV		R16, R8
+	CPI		R16, 0x00
+	BREQ	RES_UNIMES
+	DEC		R7
+	MOV		R16, R7
+	CPI		R16, 0xFF
+	BREQ	REST_DECMES
+	RET
+REST_DECMES: 
+	LDI		R16, 0x09
+	MOV		R7, R16
+	DEC		R8
+	RET
+RES_UNIMES: 
+	DEC		R7
+	MOV		R16, R7
+	CPI		R16, 0x00
+	BREQ	UNDER_MES
+	RET
+UNDER_MES: 
+	LDI		MESES, 0x0C
+	LDI		R16, 0x02
+	MOV		R7, R16
+	LDI		R16, 0x01
+	MOV		R8, R16
+	RET
+
+//**********Logica para editar los minutos para la alarma**********//
+CONF_ALR_MIN: 
+	IN		R20, PINC
+	SBIS	PINC, PC1
+	CALL	INCREMET_ALR_MIN	
+	SBIS	PINC, PC2
+	CALL	DECREMENT_ALR_MIN
+	CALL	MILTIPLEX_ALR
+	RET
+
+//Incrementar el display 1 (minutos)
+INCREMET_ALR_MIN: 
+	INC		R10
+	MOV		R16, R10
+	CPI		R16, 0x0A
+	BREQ	DEC_MIN_ALR
+	CLR		R16
+	RET
+DEC_MIN_ALR:
+	CLR		R16
+	CLR		R10
+	INC		R11
+	MOV		R16, R11
+	CPI		R16, 0x06
+	BREQ	OVER_MIN_ALR
+	RET
+OVER_MIN_ALR: 
+	CLR		R16
+	CLR		R11
+	CLR		R10
+	RET
+
+//Decrementar el display 1 (minutos)
+DECREMENT_ALR_MIN: 
+	DEC		R10
+	MOV		R16, R10
+	CPI		R16, 0xFF
+	BREQ	DEC_REST_ALR
+	CLR		R16
+	RET
+DEC_REST_ALR: 
+	LDI		R16, 0x09
+	MOV		R10, R16
+	DEC		R11
+	MOV		R16, R11
+	CPI		R16, 0xFF
+	BREQ	UNDER_MIN_ALR
+	CLR		R16
+	RET
+UNDER_MIN_ALR: 
+	LDI		R16, 0x09
+	MOV		R10, R16
+	LDI		R16, 0x05
+	MOV		R11, R16
+	RET
+
+//**********Logica para editar las horas para la alarma**********//
+CONF_ALR_HRS: 
+	IN		R20, PINC
+	SBIS	PINC, PC1
+	CALL	INCREMET_ALR_HRS //Incrementar el display 2 (horas)
+	SBIS	PINC, PC2
+	CALL	DECREMENT_ALR_HRS //Decrementar el display 2 (horas)
+	CALL	MILTIPLEX_ALR
+	RET
+
+//Incrementar el display 2 (horas)
+INCREMET_ALR_HRS: 
+	MOV		R16, R13
+	CPI		R16, 0x02
+	BREQ	HRS_24_ALR
+	INC		R12
+	MOV		R16, R12
+	CPI		R16, 0x0A
+	BREQ	HRS_DEC_ALR
+	CLR		R16
+	RET
+HRS_DEC_ALR: 
+	CLR		R12
+	CLR		R16
+	INC		R13
+	RET
+HRS_24_ALR: 
+	INC		R12
+	MOV		R16, R12
+	CPI		R16, 0x04
+	BREQ	OVER_HRS_ALR 
+	CLR		R16
+	RET
+OVER_HRS_ALR: 
+	CLR		R16
+	CLR		R12
+	CLR		R13
+	RET
+
+//Decrementar el display 2 (horas)
+DECREMENT_ALR_HRS: 
+	DEC		R12
+	MOV		R16, R12
+	CPI		R16, 0xFF
+	BREQ	DEC_HRS_ALR
+	RET
+DEC_HRS_ALR: 
+	LDI		R16, 0x09
+	MOV		R12, R16
+	DEC		R13
+	MOV		R16, R13
+	CPI		R16, 0xFF
+	BREQ	UNDER_HRS_ALR
+	RET
+UNDER_HRS_ALR: 
+	LDI		R16, 0x03
+	MOV		R12, R16
+	LDI		R16, 0x02
+	MOV		R13, R16
+	RET
+	
+//**********Logica para activar o desactivar la alarma**********//
 APG_ALR: 
-	//logica para apagar la alarma. 
-	//reseteo de la configuración de la alarma 
-	RJMP	MAIN
+	IN		R20, PINC
+	SBIS	PINC, PC1
+	CALL	ACTIVAR_ALAR
+	SBIS	PINC, PC2
+	CALL	DESACTIVAR_ALAR
+	CALL	MILTIPLEX_ALR
+	RET
 
+ACTIVAR_ALAR: 
+	LDI		ACT, 0x01
+	RET
+DESACTIVAR_ALAR: 
+	LDI		ACT, 0x00
+	CLR		R10
+	CLR		R11
+	CLR		R12
+	CLR		R12
+	RET		
+
+//Mostrar el Incremento y Decremento de la alarma (MULTIPLEXACION)
+MILTIPLEX_ALR: 
+	CPI		R23, 0x01 
+	BREQ	DIS1_ALR
+	CPI		R23, 0x02
+	BREQ	DIS2_ALR
+	CPI		R23, 0x03
+	BREQ	DIS3_ALR
+	CPI		R23, 0x04
+	BREQ	DIS4_ALR
+	RET
+
+	DIS1_ALR:
+	//UNIDADES DE MINUTOS 
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R10
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB0
+	CBI		PORTB, PB1
+	CBI		PORTB, PB2
+	SBI		PORTB, PB3
+	LDI		R23, 0x01
+	RET
+
+	DIS2_ALR:
+	//DECENAS DE MINUTOS 
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R11
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB0
+	CBI		PORTB, PB1
+	CBI		PORTB, PB3
+	SBI		PORTB, PB2
+	LDI		R23, 0x02
+	RET
+
+	DIS3_ALR:
+	//UNICADES DE HORAS
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R12
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB0
+	CBI		PORTB, PB3
+	CBI		PORTB, PB2
+	SBI		PORTB, PB1
+	LDI		R23, 0x03
+	RET
+
+	DIS4_ALR:
+	//DECENAS DE HORAS
+	LDI		ZL, LOW(TABLA7SEG <<1)
+	LDI		ZH, HIGH(TABLA7SEG <<1)
+	ADD		ZL, R13
+	LPM		R22, Z
+	OUT		PORTD, R22
+	CBI		PORTB, PB3
+	CBI		PORTB, PB1
+	CBI		PORTB, PB2
+	SBI		PORTB, PB0
+	LDI		R23, 0x00
+	RET
+	
 INICIO:
 	LDI		ZL, LOW(TABLA7SEG <<1)
 	LDI		ZH, HIGH(TABLA7SEG <<1)
@@ -175,19 +888,8 @@ INICIO:
 	OUT		PORTD, R22
 	RET
 
-INI_TMR1:
-	//Inicio del timer 1
-	LDI		R16, HIGH(T1Value)
-	STS		TCNT1H, R16
-	LDI		R16, LOW(T1Value)
-	STS		TCNT1L, R16
 
-	LDI		R16, 0x00
-	STS		TCCR1A, R16
-	LDI		R16, (1 << CS11)
-	STS		TCCR1B, R16
-	RET
-
+//******************************** LOGICA PARA EL RELOJ ******************************//
 //******************************** LOGICA PARA EL RELOJ ******************************//
 RELOJ_7SEG: 
 	//Falta configuración del timer1/0
@@ -199,51 +901,125 @@ RELOJ_7SEG:
 	STS		TCNT1H, R16
 	LDI		R16, LOW(T1Value)
 	STS		TCNT1L, R16 //La interrupción ocurre cada minuto o 60s
-	INC		R19
-	CPI		R19, 0x0A //Unidades de minutos 
-	BRNE	FIN1
-	LDI		R19, 0x00 
-	INC		R20
-	CPI		R20, 0x06 //Decenas de minutos 
-	BRNE	FIN1
-	LDI		R20, 0x00
-	INC		R21
-	CPI		R21, 0x0A //Unidades de horas
-	BRNE	FIN1
-	CPI		R23, 0x02 //Decenas de horas
-	BRLO	RESET_HRS
-	CPI		R21, 0x04
-	BRNE	FIN1
 	
-	//LDI		R21, 0x00
-	//INC		R23
-	//CPI		R23, 0x02
+	//MOV		R7, R16
+	INC		R9
+	MOV		R16, R9	//Unidades de minutos 
+	CPI		R16, 0x0A 
+	BRNE	REGRESO
+	CLR		R16
+	CLR		R9 
+	INC		R2	
+	MOV		R16, R2 //Decenas de minutos 
+	CPI		R16, 0x06 
+	BRNE	REGRESO
+	CLR		R16
+	CLR		R2
+	MOV		R16, R4 
+	CPI		R16, 0x02
+	BREQ	RESET_HRS
+	INC		R3	
+	MOV		R16, R3	//Unidades de horas
+	CPI		R16, 0x0A
+	BREQ	INC_DECHRS
+	RJMP	FIN1
+REGRESO: 
+	RJMP	FIN1
 
+INC_DECHRS: 
+	CLR		R9
+	CLR		R2
+	CLR		R3
+	INC		R4	//Decenas de horas
+	RJMP	FIN1
 RESET_HRS: 
-	CLR		R21 // O PUEDE SER LDI
-	INC		R23
-	CPI		R23, 0x03
-	BRNE	FIN1
-	CLR		R23	// O PUEDE SER LDI	
-	INC		R24	//Unidades de dias
-
-	LDI		ZL, MES_DIA
-	ADD		ZL, R26
-	LPM		R16, Z
-	CPI		R24, 0x0A
-	BRNE	FIN1
-	CLR		R24
-	INC		R25
-	CP		R25, R16
-	BRLO	FIN1
-
-RESET_DIAS: 
-	CLR		R24
-	CLR		R25
-	INC		R26
-	CPI		R26, 0x0D
-	BRNE	FIN1
-	CLR		R26
+	INC		R3
+	MOV		R16, R3
+	CPI		R16, 0x04
+	BREQ	SUM_DIA
+	RJMP	FIN1
+SUM_DIA: 
+	CLR		R9
+	CLR		R2
+	CLR		R3
+	CLR		R4
+	SWAP	R6	//Decena de dias 
+	ADD		R6, R5 
+	LDI		ZL, LOW(MES_DIA << 1)  
+	LDI		ZH, HIGH(MES_DIA << 1)  
+	ADD		ZL, MESES
+	LPM		R22, Z
+	CP		R6, R22
+	BREQ	INC_UMES	
+	INC		R5		//Unidad de dias
+	MOV		R16, R5
+	CPI		R16, 0x0A
+	BREQ	SUM_DECDIA
+	RJMP	FIN1
+SUM_DECDIA: 
+	CLR		R9
+	CLR		R2
+	CLR		R3
+	CLR		R4
+	CLR		R5
+	SWAP	R6
+	ADD		R6, R5
+	LDI		ZL, LOW(MES_DIA << 1)  
+	LDI		ZH, HIGH(MES_DIA << 1)  
+	ADD		ZL, MESES
+	LPM		R22, Z
+	CP		R6, R22
+	BREQ	INC_UMES
+	INC		R6
+	RJMP	FIN1
+INC_UMES: 
+	CLR		R16
+	CLR		R9
+	CLR		R2
+	CLR		R3
+	CLR		R4
+	CLR		R6
+	LDI		R16, 0x01
+	MOV		R5, R16
+	INC		MESES
+	MOV		R16, R8
+	CPI		R16, 0x01
+	BREQ	A_MES
+	INC		R7
+	MOV		R16, R7
+	CPI		R16, 0x0A
+	BREQ	INC_DECMES
+	RJMP	FIN1
+INC_DECMES:
+	CLR		R16
+	CLR		R9
+	CLR		R2
+	CLR		R3
+	CLR		R4
+	CLR		R7
+	LDI		R16, 0x01
+	MOV		R5, R16
+	INC		R8
+	RJMP	FIN1
+A_MES: 
+	INC		R7
+	MOV		R16, R7
+	CPI		R16, 0x03
+	BREQ	RESET_TOTAL
+	RJMP	FIN1
+RESET_TOTAL: 
+	CLR		R9
+	CLR		R2
+	CLR		R3
+	CLR		R4
+	CLR		R5
+	CLR		R6
+	LDI		R16, 0x01
+	MOV		R16, R7
+	LDI		R16, 0x01
+	MOV		R16, R5
+	CLR		MESES
+	RJMP	FIN1
 
 FIN1:
 	POP		R16
@@ -252,70 +1028,91 @@ FIN1:
 	RETI
 
 //******************************** LOGICA PARA LOS TRANSISTORES ******************************//
+//******************************** LOGICA PARA LOS TRANSISTORES ******************************//
 TNSTR: 
-	//Falta configuración del timer2
+	//LOGICA PARA MOSTRAR LOS VALORES EN LOS DISPLAYS
 	PUSH	R16
 	IN		R16, SREG
 	PUSH	R16
 
 	SBI		TIFR0, TOV0
-	LDI		R16, 100
+	LDI		R16, T0Value
 	OUT		TCNT0, R16
-	INC		R20
-	CPI		R20, 100 //Ahora seria de un 500ms, se enciende las leds del medio 
 
+	INC		R23
+	CPI		R23, 0x05
+	BREQ	OVER
+	RJMP	FIN2
+
+OVER: 
+	CLR		R23
+	RJMP	FIN2
 FIN2:
 	POP		R16
 	OUT		SREG, R16
 	POP		R16
 	RETI
 
-
+//******************** LOGICA PARA LAS CONFIGURACIONES DEL RELOJ ***********************//
 //******************** LOGICA PARA LAS CONFIGURACIONES DEL RELOJ ***********************//
 BOTONES: 
 	PUSH	R16
 	IN		R16, SREG
 	PUSH	R16
 
-	SBIS	PINB, PB0 //Ver si fue presionado, y cual es su valor para ver en cual modo estar 
+	SBIS	PINC, PC0
 	INC		MOD
-	
-	CPI		MOD, 0x07
+	CPI		MOD, 0x09
 	BRNE	MODOS
 	CLR		MOD
 	RJMP	FIN3
-
+	
+//QUE MODO ESTA ACTIVO
 MODOS: 
-	CPI		MOD, 1
-	BREQ	HRS_ISR
+	CPI		MOD, 0
+	BREQ	HRS_IRS
+	CPI		MOD, 1 
+	BREQ	FCH_IRS
 	CPI		MOD, 2
-	BREQ	FCH_ISR
+	BREQ	CONF_HRS_IRS
 	CPI		MOD, 3
-	BREQ	CONF_HRS_ISR
+	BREQ	CONF_MIN_IRS
 	CPI		MOD, 4
-	BREQ	CONF_FCH_ISR
+	BREQ	CONF_MES_IRS
 	CPI		MOD, 5
-	BREQ	CONF_ALR_ISR
+	BREQ	CONF_DIS_IRS
 	CPI		MOD, 6
-	BREQ	APG_ALR_ISR
+	BREQ	CONF_MIN_ALR_IRS
+	CPI		MOD, 7
+	BREQ	CONF_HRS_ALR_IRS
+	CPI		MOD, 8
+	BREQ	APG_ALR_IRS
+
+HRS_IRS: 
 	RJMP	FIN3
 
-HRS_ISR:
+FCH_IRS: 
+	RJMP	FIN3
+	
+CONF_HRS_IRS: 
+	RJMP	FIN3
+		
+CONF_MIN_IRS: 
 	RJMP	FIN3
 
-FCH_ISR:
+CONF_DIS_IRS: 
+	RJMP	FIN3
+	
+CONF_MES_IRS:
 	RJMP	FIN3
 
-CONF_HRS_ISR:	
+CONF_MIN_ALR_IRS: 
 	RJMP	FIN3
 
-CONF_FCH_ISR:
+CONF_HRS_ALR_IRS: 
 	RJMP	FIN3
 
-CONF_ALR_ISR:
-	RJMP	FIN3
-
-APG_ALR_ISR:
+APG_ALR_IRS: 
 	RJMP	FIN3
 
 FIN3: 
@@ -325,19 +1122,23 @@ FIN3:
 	RETI
 
 //******************************** LOGICA PARA LAS LEDS ******************************//
+//******************************** LOGICA PARA LAS LEDS ******************************//
 LEDS1: 
 	//Falta configuración del timer2
 	PUSH	R16
 	IN		R16, SREG
 	PUSH	R16
 
-	SBI		TIFR0, TOV0
-	LDI		R16, 100
-	OUT		TCNT0, R16
-	INC		R20
-	CPI		R20, 100 //Ahora seria de un 500ms, se enciende las leds del medio 
+	LDI		R16, T2Value
+	STS		TCNT2, R16
 
+	INC		R27
+	CPI		R27, 10
+	BRNE	FIN_ISR2
+	SBI		PINB, PB5
+	CLR		R27
 
+FIN_ISR2:
 	POP		R16
 	OUT		SREG, R16
 	POP		R16
