@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm Mon Mar 17 14:42:50 2025
+AVRASM ver. 2.2.8  C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm Mon Mar 17 17:04:00 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm(8): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
@@ -1041,16 +1041,16 @@ C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1
                                  .org	0x0000
 000000 940c 002d                 	JMP		START
                                  .org	PCI2addr
-00000a 940c 036e                 	JMP		BOTONES
+00000a 940c 0374                 	JMP		BOTONES
                                  
                                  .org	OVF2addr
-000012 940c 0396                 	JMP		LEDS1
+000012 940c 039c                 	JMP		LEDS1
                                  
                                  .org	OVF1addr
-00001a 940c 02e6                 	JMP		RELOJ_7SEG
+00001a 940c 02ec                 	JMP		RELOJ_7SEG
                                  
                                  .org	OVF0addr
-000020 940c 035e                 	JMP		TNSTR
+000020 940c 0364                 	JMP		TNSTR
                                  
                                  .equ T1Value = 0x1B1E
                                  .equ T0Value = 0xFF
@@ -1145,7 +1145,7 @@ C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1
 000060 e000                      	LDI		R16, 0x00
 000061 b90b                      	OUT		PORTD, R16
                                  
-000062 940e 02e1                 	CALL	INICIO
+000062 940e 02e7                 	CALL	INICIO
                                  
                                  	//Se desactiva los puertos seriales 
 000064 e000                      	LDI		R16, 0x00
@@ -1722,7 +1722,7 @@ C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1
 00023c 940e 0244                 	CALL	INCREMET_ALR_MIN	
 00023e 9b32                      	SBIS	PINC, PC2
 00023f 940e 0255                 	CALL	DECREMENT_ALR_MIN
-000241 940e 02ac                 	CALL	MILTIPLEX_ALR
+000241 940e 02b2                 	CALL	MILTIPLEX_ALR
 000243 9508                      	RET
                                  
                                  //Incrementar el display 1 (minutos)
@@ -1778,7 +1778,7 @@ C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1
 00026a 940e 0272                 	CALL	INCREMET_ALR_HRS //Incrementar el display 2 (horas)
 00026c 9b32                      	SBIS	PINC, PC2
 00026d 940e 0289                 	CALL	DECREMENT_ALR_HRS //Decrementar el display 2 (horas)
-00026f 940e 02ac                 	CALL	MILTIPLEX_ALR
+00026f 940e 02b2                 	CALL	MILTIPLEX_ALR
 000271 9508                      	RET
                                  
                                  //Incrementar el display 2 (horas)
@@ -1838,350 +1838,356 @@ C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1
 00029b 9b31                      	SBIS	PINC, PC1
 00029c 940e 02a4                 	CALL	ACTIVAR_ALAR
 00029e 9b32                      	SBIS	PINC, PC2
-00029f 940e 02a6                 	CALL	DESACTIVAR_ALAR
-0002a1 940e 02ac                 	CALL	MILTIPLEX_ALR
+00029f 940e 02a9                 	CALL	DESACTIVAR_ALAR
+0002a1 940e 02b2                 	CALL	MILTIPLEX_ALR
 0002a3 9508                      	RET
                                  
                                  ACTIVAR_ALAR: 
-0002a4 e081                      	LDI		ACT, 0x01
-0002a5 9508                      	RET
+0002a4 9a43                      	SBI		PORTC, PC3
+0002a5 9844                      	CBI		PORTC, PC4
+0002a6 9845                      	CBI		PORTC, PC5
+0002a7 e081                      	LDI		ACT, 0x01
+0002a8 9508                      	RET
                                  DESACTIVAR_ALAR: 
-0002a6 e080                      	LDI		ACT, 0x00
-0002a7 24aa                      	CLR		R10
-0002a8 24bb                      	CLR		R11
-0002a9 24cc                      	CLR		R12
-0002aa 24cc                      	CLR		R12
-0002ab 9508                      	RET		
+0002a9 9843                      	CBI		PORTC, PC3
+0002aa 9844                      	CBI		PORTC, PC4
+0002ab 9a45                      	SBI		PORTC, PC5
+0002ac e080                      	LDI		ACT, 0x00
+0002ad 24aa                      	CLR		R10
+0002ae 24bb                      	CLR		R11
+0002af 24cc                      	CLR		R12
+0002b0 24cc                      	CLR		R12
+0002b1 9508                      	RET		
                                  
                                  //Mostrar el Incremento y Decremento de la alarma (MULTIPLEXACION)
                                  MILTIPLEX_ALR: 
-0002ac 3071                      	CPI		R23, 0x01 
-0002ad f039                      	BREQ	DIS1_ALR
-0002ae 3072                      	CPI		R23, 0x02
-0002af f081                      	BREQ	DIS2_ALR
-0002b0 3073                      	CPI		R23, 0x03
-0002b1 f0c9                      	BREQ	DIS3_ALR
-0002b2 3074                      	CPI		R23, 0x04
-0002b3 f111                      	BREQ	DIS4_ALR
-0002b4 9508                      	RET
+0002b2 3071                      	CPI		R23, 0x01 
+0002b3 f039                      	BREQ	DIS1_ALR
+0002b4 3072                      	CPI		R23, 0x02
+0002b5 f081                      	BREQ	DIS2_ALR
+0002b6 3073                      	CPI		R23, 0x03
+0002b7 f0c9                      	BREQ	DIS3_ALR
+0002b8 3074                      	CPI		R23, 0x04
+0002b9 f111                      	BREQ	DIS4_ALR
+0002ba 9508                      	RET
                                  
                                  	DIS1_ALR:
                                  	//UNIDADES DE MINUTOS 
-0002b5 e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
-0002b6 e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
-0002b7 0dea                      	ADD		ZL, R10
-0002b8 9164                      	LPM		R22, Z
-0002b9 b96b                      	OUT		PORTD, R22
-0002ba 9828                      	CBI		PORTB, PB0
-0002bb 9829                      	CBI		PORTB, PB1
-0002bc 982a                      	CBI		PORTB, PB2
-0002bd 9a2b                      	SBI		PORTB, PB3
-0002be e071                      	LDI		R23, 0x01
-0002bf 9508                      	RET
+0002bb e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
+0002bc e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
+0002bd 0dea                      	ADD		ZL, R10
+0002be 9164                      	LPM		R22, Z
+0002bf b96b                      	OUT		PORTD, R22
+0002c0 9828                      	CBI		PORTB, PB0
+0002c1 9829                      	CBI		PORTB, PB1
+0002c2 982a                      	CBI		PORTB, PB2
+0002c3 9a2b                      	SBI		PORTB, PB3
+0002c4 e071                      	LDI		R23, 0x01
+0002c5 9508                      	RET
                                  
                                  	DIS2_ALR:
                                  	//DECENAS DE MINUTOS 
-0002c0 e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
-0002c1 e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
-0002c2 0deb                      	ADD		ZL, R11
-0002c3 9164                      	LPM		R22, Z
-0002c4 b96b                      	OUT		PORTD, R22
-0002c5 9828                      	CBI		PORTB, PB0
-0002c6 9829                      	CBI		PORTB, PB1
-0002c7 982b                      	CBI		PORTB, PB3
-0002c8 9a2a                      	SBI		PORTB, PB2
-0002c9 e072                      	LDI		R23, 0x02
-0002ca 9508                      	RET
+0002c6 e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
+0002c7 e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
+0002c8 0deb                      	ADD		ZL, R11
+0002c9 9164                      	LPM		R22, Z
+0002ca b96b                      	OUT		PORTD, R22
+0002cb 9828                      	CBI		PORTB, PB0
+0002cc 9829                      	CBI		PORTB, PB1
+0002cd 982b                      	CBI		PORTB, PB3
+0002ce 9a2a                      	SBI		PORTB, PB2
+0002cf e072                      	LDI		R23, 0x02
+0002d0 9508                      	RET
                                  
                                  	DIS3_ALR:
                                  	//UNICADES DE HORAS
-0002cb e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
-0002cc e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
-0002cd 0dec                      	ADD		ZL, R12
-0002ce 9164                      	LPM		R22, Z
-0002cf b96b                      	OUT		PORTD, R22
-0002d0 9828                      	CBI		PORTB, PB0
-0002d1 982b                      	CBI		PORTB, PB3
-0002d2 982a                      	CBI		PORTB, PB2
-0002d3 9a29                      	SBI		PORTB, PB1
-0002d4 e073                      	LDI		R23, 0x03
-0002d5 9508                      	RET
+0002d1 e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
+0002d2 e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
+0002d3 0dec                      	ADD		ZL, R12
+0002d4 9164                      	LPM		R22, Z
+0002d5 b96b                      	OUT		PORTD, R22
+0002d6 9828                      	CBI		PORTB, PB0
+0002d7 982b                      	CBI		PORTB, PB3
+0002d8 982a                      	CBI		PORTB, PB2
+0002d9 9a29                      	SBI		PORTB, PB1
+0002da e073                      	LDI		R23, 0x03
+0002db 9508                      	RET
                                  
                                  	DIS4_ALR:
                                  	//DECENAS DE HORAS
-0002d6 e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
-0002d7 e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
-0002d8 0ded                      	ADD		ZL, R13
-0002d9 9164                      	LPM		R22, Z
-0002da b96b                      	OUT		PORTD, R22
-0002db 982b                      	CBI		PORTB, PB3
-0002dc 9829                      	CBI		PORTB, PB1
-0002dd 982a                      	CBI		PORTB, PB2
-0002de 9a28                      	SBI		PORTB, PB0
-0002df e070                      	LDI		R23, 0x00
-0002e0 9508                      	RET
+0002dc e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
+0002dd e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
+0002de 0ded                      	ADD		ZL, R13
+0002df 9164                      	LPM		R22, Z
+0002e0 b96b                      	OUT		PORTD, R22
+0002e1 982b                      	CBI		PORTB, PB3
+0002e2 9829                      	CBI		PORTB, PB1
+0002e3 982a                      	CBI		PORTB, PB2
+0002e4 9a28                      	SBI		PORTB, PB0
+0002e5 e070                      	LDI		R23, 0x00
+0002e6 9508                      	RET
                                  	
                                  INICIO:
-0002e1 e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
-0002e2 e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
-0002e3 9164                      	LPM		R22, Z
-0002e4 b96b                      	OUT		PORTD, R22
-0002e5 9508                      	RET
+0002e7 e4e4                      	LDI		ZL, LOW(TABLA7SEG <<1)
+0002e8 e0f0                      	LDI		ZH, HIGH(TABLA7SEG <<1)
+0002e9 9164                      	LPM		R22, Z
+0002ea b96b                      	OUT		PORTD, R22
+0002eb 9508                      	RET
                                  
                                  
                                  //******************************** LOGICA PARA EL RELOJ ******************************//
                                  //******************************** LOGICA PARA EL RELOJ ******************************//
                                  RELOJ_7SEG: 
                                  	//Falta configuración del timer1/0
-0002e6 930f                      	PUSH	R16
-0002e7 b70f                      	IN		R16, SREG
-0002e8 930f                      	PUSH	R16
+0002ec 930f                      	PUSH	R16
+0002ed b70f                      	IN		R16, SREG
+0002ee 930f                      	PUSH	R16
                                  
-0002e9 e10b                      	LDI		R16, HIGH(T1Value)
-0002ea 9300 0085                 	STS		TCNT1H, R16
-0002ec e10e                      	LDI		R16, LOW(T1Value)
-0002ed 9300 0084                 	STS		TCNT1L, R16 //La interrupción ocurre cada minuto o 60s
+0002ef e10b                      	LDI		R16, HIGH(T1Value)
+0002f0 9300 0085                 	STS		TCNT1H, R16
+0002f2 e10e                      	LDI		R16, LOW(T1Value)
+0002f3 9300 0084                 	STS		TCNT1L, R16 //La interrupción ocurre cada minuto o 60s
                                  	
                                  	//MOV		R7, R16
-0002ef 9493                      	INC		R9
-0002f0 2d09                      	MOV		R16, R9	//Unidades de minutos 
-0002f1 300a                      	CPI		R16, 0x0A 
-0002f2 f481                      	BRNE	REGRESO
-0002f3 2700                      	CLR		R16
-0002f4 2499                      	CLR		R9 
-0002f5 9423                      	INC		R2	
-0002f6 2d02                      	MOV		R16, R2 //Decenas de minutos 
-0002f7 3006                      	CPI		R16, 0x06 
-0002f8 f451                      	BRNE	REGRESO
+0002f5 9493                      	INC		R9
+0002f6 2d09                      	MOV		R16, R9	//Unidades de minutos 
+0002f7 300a                      	CPI		R16, 0x0A 
+0002f8 f481                      	BRNE	REGRESO
 0002f9 2700                      	CLR		R16
-0002fa 2422                      	CLR		R2
-0002fb 2d04                      	MOV		R16, R4 
-0002fc 3002                      	CPI		R16, 0x02
-0002fd f059                      	BREQ	RESET_HRS
-0002fe 9433                      	INC		R3	
-0002ff 2d03                      	MOV		R16, R3	//Unidades de horas
-000300 300a                      	CPI		R16, 0x0A
-000301 f011                      	BREQ	INC_DECHRS
-000302 c057                      	RJMP	FIN1
+0002fa 2499                      	CLR		R9 
+0002fb 9423                      	INC		R2	
+0002fc 2d02                      	MOV		R16, R2 //Decenas de minutos 
+0002fd 3006                      	CPI		R16, 0x06 
+0002fe f451                      	BRNE	REGRESO
+0002ff 2700                      	CLR		R16
+000300 2422                      	CLR		R2
+000301 2d04                      	MOV		R16, R4 
+000302 3002                      	CPI		R16, 0x02
+000303 f059                      	BREQ	RESET_HRS
+000304 9433                      	INC		R3	
+000305 2d03                      	MOV		R16, R3	//Unidades de horas
+000306 300a                      	CPI		R16, 0x0A
+000307 f011                      	BREQ	INC_DECHRS
+000308 c057                      	RJMP	FIN1
                                  REGRESO: 
-000303 c056                      	RJMP	FIN1
+000309 c056                      	RJMP	FIN1
                                  
                                  INC_DECHRS: 
-000304 2499                      	CLR		R9
-000305 2422                      	CLR		R2
-000306 2433                      	CLR		R3
-000307 9443                      	INC		R4	//Decenas de horas
-000308 c051                      	RJMP	FIN1
+00030a 2499                      	CLR		R9
+00030b 2422                      	CLR		R2
+00030c 2433                      	CLR		R3
+00030d 9443                      	INC		R4	//Decenas de horas
+00030e c051                      	RJMP	FIN1
                                  RESET_HRS: 
-000309 9433                      	INC		R3
-00030a 2d03                      	MOV		R16, R3
-00030b 3004                      	CPI		R16, 0x04
-00030c f009                      	BREQ	SUM_DIA
-00030d c04c                      	RJMP	FIN1
+00030f 9433                      	INC		R3
+000310 2d03                      	MOV		R16, R3
+000311 3004                      	CPI		R16, 0x04
+000312 f009                      	BREQ	SUM_DIA
+000313 c04c                      	RJMP	FIN1
                                  SUM_DIA: 
-00030e 2499                      	CLR		R9
-00030f 2422                      	CLR		R2
-000310 2433                      	CLR		R3
-000311 2444                      	CLR		R4
-000312 9462                      	SWAP	R6	//Decena de dias 
-000313 0c65                      	ADD		R6, R5 
-000314 e4ee                      	LDI		ZL, LOW(MES_DIA << 1)  
-000315 e0f0                      	LDI		ZH, HIGH(MES_DIA << 1)  
-000316 0fe5                      	ADD		ZL, MESES
-000317 9164                      	LPM		R22, Z
-000318 1666                      	CP		R6, R22
-000319 f0a1                      	BREQ	INC_UMES	
-00031a 9453                      	INC		R5		//Unidad de dias
-00031b 2d05                      	MOV		R16, R5
-00031c 300a                      	CPI		R16, 0x0A
-00031d f009                      	BREQ	SUM_DECDIA
-00031e c03b                      	RJMP	FIN1
+000314 2499                      	CLR		R9
+000315 2422                      	CLR		R2
+000316 2433                      	CLR		R3
+000317 2444                      	CLR		R4
+000318 9462                      	SWAP	R6	//Decena de dias 
+000319 0c65                      	ADD		R6, R5 
+00031a e4ee                      	LDI		ZL, LOW(MES_DIA << 1)  
+00031b e0f0                      	LDI		ZH, HIGH(MES_DIA << 1)  
+00031c 0fe5                      	ADD		ZL, MESES
+00031d 9164                      	LPM		R22, Z
+00031e 1666                      	CP		R6, R22
+00031f f0a1                      	BREQ	INC_UMES	
+000320 9453                      	INC		R5		//Unidad de dias
+000321 2d05                      	MOV		R16, R5
+000322 300a                      	CPI		R16, 0x0A
+000323 f009                      	BREQ	SUM_DECDIA
+000324 c03b                      	RJMP	FIN1
                                  SUM_DECDIA: 
-00031f 2499                      	CLR		R9
-000320 2422                      	CLR		R2
-000321 2433                      	CLR		R3
-000322 2444                      	CLR		R4
-000323 2455                      	CLR		R5
-000324 9462                      	SWAP	R6
-000325 0c65                      	ADD		R6, R5
-000326 e4ee                      	LDI		ZL, LOW(MES_DIA << 1)  
-000327 e0f0                      	LDI		ZH, HIGH(MES_DIA << 1)  
-000328 0fe5                      	ADD		ZL, MESES
-000329 9164                      	LPM		R22, Z
-00032a 1666                      	CP		R6, R22
-00032b f011                      	BREQ	INC_UMES
-00032c 9463                      	INC		R6
-00032d c02c                      	RJMP	FIN1
+000325 2499                      	CLR		R9
+000326 2422                      	CLR		R2
+000327 2433                      	CLR		R3
+000328 2444                      	CLR		R4
+000329 2455                      	CLR		R5
+00032a 9462                      	SWAP	R6
+00032b 0c65                      	ADD		R6, R5
+00032c e4ee                      	LDI		ZL, LOW(MES_DIA << 1)  
+00032d e0f0                      	LDI		ZH, HIGH(MES_DIA << 1)  
+00032e 0fe5                      	ADD		ZL, MESES
+00032f 9164                      	LPM		R22, Z
+000330 1666                      	CP		R6, R22
+000331 f011                      	BREQ	INC_UMES
+000332 9463                      	INC		R6
+000333 c02c                      	RJMP	FIN1
                                  INC_UMES: 
-00032e 2700                      	CLR		R16
-00032f 2499                      	CLR		R9
-000330 2422                      	CLR		R2
-000331 2433                      	CLR		R3
-000332 2444                      	CLR		R4
-000333 2466                      	CLR		R6
-000334 e001                      	LDI		R16, 0x01
-000335 2e50                      	MOV		R5, R16
-000336 9553                      	INC		MESES
-000337 2d08                      	MOV		R16, R8
-000338 3001                      	CPI		R16, 0x01
-000339 f079                      	BREQ	A_MES
-00033a 9473                      	INC		R7
-00033b 2d07                      	MOV		R16, R7
-00033c 300a                      	CPI		R16, 0x0A
-00033d f009                      	BREQ	INC_DECMES
-00033e c01b                      	RJMP	FIN1
+000334 2700                      	CLR		R16
+000335 2499                      	CLR		R9
+000336 2422                      	CLR		R2
+000337 2433                      	CLR		R3
+000338 2444                      	CLR		R4
+000339 2466                      	CLR		R6
+00033a e001                      	LDI		R16, 0x01
+00033b 2e50                      	MOV		R5, R16
+00033c 9553                      	INC		MESES
+00033d 2d08                      	MOV		R16, R8
+00033e 3001                      	CPI		R16, 0x01
+00033f f079                      	BREQ	A_MES
+000340 9473                      	INC		R7
+000341 2d07                      	MOV		R16, R7
+000342 300a                      	CPI		R16, 0x0A
+000343 f009                      	BREQ	INC_DECMES
+000344 c01b                      	RJMP	FIN1
                                  INC_DECMES:
-00033f 2700                      	CLR		R16
-000340 2499                      	CLR		R9
-000341 2422                      	CLR		R2
-000342 2433                      	CLR		R3
-000343 2444                      	CLR		R4
-000344 2477                      	CLR		R7
-000345 e001                      	LDI		R16, 0x01
-000346 2e50                      	MOV		R5, R16
-000347 9483                      	INC		R8
-000348 c011                      	RJMP	FIN1
+000345 2700                      	CLR		R16
+000346 2499                      	CLR		R9
+000347 2422                      	CLR		R2
+000348 2433                      	CLR		R3
+000349 2444                      	CLR		R4
+00034a 2477                      	CLR		R7
+00034b e001                      	LDI		R16, 0x01
+00034c 2e50                      	MOV		R5, R16
+00034d 9483                      	INC		R8
+00034e c011                      	RJMP	FIN1
                                  A_MES: 
-000349 9473                      	INC		R7
-00034a 2d07                      	MOV		R16, R7
-00034b 3003                      	CPI		R16, 0x03
-00034c f009                      	BREQ	RESET_TOTAL
-00034d c00c                      	RJMP	FIN1
+00034f 9473                      	INC		R7
+000350 2d07                      	MOV		R16, R7
+000351 3003                      	CPI		R16, 0x03
+000352 f009                      	BREQ	RESET_TOTAL
+000353 c00c                      	RJMP	FIN1
                                  RESET_TOTAL: 
-00034e 2499                      	CLR		R9
-00034f 2422                      	CLR		R2
-000350 2433                      	CLR		R3
-000351 2444                      	CLR		R4
-000352 2455                      	CLR		R5
-000353 2466                      	CLR		R6
-000354 e001                      	LDI		R16, 0x01
-000355 2d07                      	MOV		R16, R7
-000356 e001                      	LDI		R16, 0x01
-000357 2d05                      	MOV		R16, R5
-000358 2755                      	CLR		MESES
-000359 c000                      	RJMP	FIN1
+000354 2499                      	CLR		R9
+000355 2422                      	CLR		R2
+000356 2433                      	CLR		R3
+000357 2444                      	CLR		R4
+000358 2455                      	CLR		R5
+000359 2466                      	CLR		R6
+00035a e001                      	LDI		R16, 0x01
+00035b 2d07                      	MOV		R16, R7
+00035c e001                      	LDI		R16, 0x01
+00035d 2d05                      	MOV		R16, R5
+00035e 2755                      	CLR		MESES
+00035f c000                      	RJMP	FIN1
                                  
                                  FIN1:
-00035a 910f                      	POP		R16
-00035b bf0f                      	OUT		SREG, R16
-00035c 910f                      	POP		R16
-00035d 9518                      	RETI
+000360 910f                      	POP		R16
+000361 bf0f                      	OUT		SREG, R16
+000362 910f                      	POP		R16
+000363 9518                      	RETI
                                  
                                  //******************************** LOGICA PARA LOS TRANSISTORES ******************************//
                                  //******************************** LOGICA PARA LOS TRANSISTORES ******************************//
                                  TNSTR: 
                                  	//LOGICA PARA MOSTRAR LOS VALORES EN LOS DISPLAYS
-00035e 930f                      	PUSH	R16
-00035f b70f                      	IN		R16, SREG
-000360 930f                      	PUSH	R16
+000364 930f                      	PUSH	R16
+000365 b70f                      	IN		R16, SREG
+000366 930f                      	PUSH	R16
                                  
-000361 9aa8                      	SBI		TIFR0, TOV0
-000362 ef0f                      	LDI		R16, T0Value
-000363 bd06                      	OUT		TCNT0, R16
+000367 9aa8                      	SBI		TIFR0, TOV0
+000368 ef0f                      	LDI		R16, T0Value
+000369 bd06                      	OUT		TCNT0, R16
                                  
-000364 9573                      	INC		R23
-000365 3075                      	CPI		R23, 0x05
-000366 f009                      	BREQ	OVER
-000367 c002                      	RJMP	FIN2
+00036a 9573                      	INC		R23
+00036b 3075                      	CPI		R23, 0x05
+00036c f009                      	BREQ	OVER
+00036d c002                      	RJMP	FIN2
                                  
                                  OVER: 
-000368 2777                      	CLR		R23
-000369 c000                      	RJMP	FIN2
+00036e 2777                      	CLR		R23
+00036f c000                      	RJMP	FIN2
                                  FIN2:
-00036a 910f                      	POP		R16
-00036b bf0f                      	OUT		SREG, R16
-00036c 910f                      	POP		R16
-00036d 9518                      	RETI
+000370 910f                      	POP		R16
+000371 bf0f                      	OUT		SREG, R16
+000372 910f                      	POP		R16
+000373 9518                      	RETI
                                  
                                  //******************** LOGICA PARA LAS CONFIGURACIONES DEL RELOJ ***********************//
                                  //******************** LOGICA PARA LAS CONFIGURACIONES DEL RELOJ ***********************//
                                  BOTONES: 
-00036e 930f                      	PUSH	R16
-00036f b70f                      	IN		R16, SREG
-000370 930f                      	PUSH	R16
+000374 930f                      	PUSH	R16
+000375 b70f                      	IN		R16, SREG
+000376 930f                      	PUSH	R16
                                  
-000371 9b30                      	SBIS	PINC, PC0
-000372 9513                      	INC		MOD
-000373 3019                      	CPI		MOD, 0x09
-000374 f411                      	BRNE	MODOS
-000375 2711                      	CLR		MOD
-000376 c01b                      	RJMP	FIN3
+000377 9b30                      	SBIS	PINC, PC0
+000378 9513                      	INC		MOD
+000379 3019                      	CPI		MOD, 0x09
+00037a f411                      	BRNE	MODOS
+00037b 2711                      	CLR		MOD
+00037c c01b                      	RJMP	FIN3
                                  	
                                  //QUE MODO ESTA ACTIVO
                                  MODOS: 
-000377 3010                      	CPI		MOD, 0
-000378 f081                      	BREQ	HRS_IRS
-000379 3011                      	CPI		MOD, 1 
-00037a f079                      	BREQ	FCH_IRS
-00037b 3012                      	CPI		MOD, 2
-00037c f071                      	BREQ	CONF_HRS_IRS
-00037d 3013                      	CPI		MOD, 3
-00037e f069                      	BREQ	CONF_MIN_IRS
-00037f 3014                      	CPI		MOD, 4
-000380 f069                      	BREQ	CONF_MES_IRS
-000381 3015                      	CPI		MOD, 5
-000382 f051                      	BREQ	CONF_DIS_IRS
-000383 3016                      	CPI		MOD, 6
-000384 f051                      	BREQ	CONF_MIN_ALR_IRS
-000385 3017                      	CPI		MOD, 7
-000386 f049                      	BREQ	CONF_HRS_ALR_IRS
-000387 3018                      	CPI		MOD, 8
-000388 f041                      	BREQ	APG_ALR_IRS
+00037d 3010                      	CPI		MOD, 0
+00037e f081                      	BREQ	HRS_IRS
+00037f 3011                      	CPI		MOD, 1 
+000380 f079                      	BREQ	FCH_IRS
+000381 3012                      	CPI		MOD, 2
+000382 f071                      	BREQ	CONF_HRS_IRS
+000383 3013                      	CPI		MOD, 3
+000384 f069                      	BREQ	CONF_MIN_IRS
+000385 3014                      	CPI		MOD, 4
+000386 f069                      	BREQ	CONF_MES_IRS
+000387 3015                      	CPI		MOD, 5
+000388 f051                      	BREQ	CONF_DIS_IRS
+000389 3016                      	CPI		MOD, 6
+00038a f051                      	BREQ	CONF_MIN_ALR_IRS
+00038b 3017                      	CPI		MOD, 7
+00038c f049                      	BREQ	CONF_HRS_ALR_IRS
+00038d 3018                      	CPI		MOD, 8
+00038e f041                      	BREQ	APG_ALR_IRS
                                  
                                  HRS_IRS: 
-000389 c008                      	RJMP	FIN3
+00038f c008                      	RJMP	FIN3
                                  
                                  FCH_IRS: 
-00038a c007                      	RJMP	FIN3
+000390 c007                      	RJMP	FIN3
                                  	
                                  CONF_HRS_IRS: 
-00038b c006                      	RJMP	FIN3
+000391 c006                      	RJMP	FIN3
                                  		
                                  CONF_MIN_IRS: 
-00038c c005                      	RJMP	FIN3
+000392 c005                      	RJMP	FIN3
                                  
                                  CONF_DIS_IRS: 
-00038d c004                      	RJMP	FIN3
+000393 c004                      	RJMP	FIN3
                                  	
                                  CONF_MES_IRS:
-00038e c003                      	RJMP	FIN3
+000394 c003                      	RJMP	FIN3
                                  
                                  CONF_MIN_ALR_IRS: 
-00038f c002                      	RJMP	FIN3
+000395 c002                      	RJMP	FIN3
                                  
                                  CONF_HRS_ALR_IRS: 
-000390 c001                      	RJMP	FIN3
+000396 c001                      	RJMP	FIN3
                                  
                                  APG_ALR_IRS: 
-000391 c000                      	RJMP	FIN3
+000397 c000                      	RJMP	FIN3
                                  
                                  FIN3: 
-000392 910f                      	POP		R16
-000393 bf0f                      	OUT		SREG, R16
-000394 910f                      	POP		R16
-000395 9518                      	RETI
+000398 910f                      	POP		R16
+000399 bf0f                      	OUT		SREG, R16
+00039a 910f                      	POP		R16
+00039b 9518                      	RETI
                                  
                                  //******************************** LOGICA PARA LAS LEDS ******************************//
                                  //******************************** LOGICA PARA LAS LEDS ******************************//
                                  LEDS1: 
                                  	//Falta configuración del timer2
-000396 930f                      	PUSH	R16
-000397 b70f                      	IN		R16, SREG
-000398 930f                      	PUSH	R16
+00039c 930f                      	PUSH	R16
+00039d b70f                      	IN		R16, SREG
+00039e 930f                      	PUSH	R16
                                  
-000399 ec0f                      	LDI		R16, T2Value
-00039a 9300 00b2                 	STS		TCNT2, R16
+00039f ec0f                      	LDI		R16, T2Value
+0003a0 9300 00b2                 	STS		TCNT2, R16
                                  
-00039c 95b3                      	INC		R27
-00039d 30ba                      	CPI		R27, 10
-00039e f411                      	BRNE	FIN_ISR2
-00039f 9a1d                      	SBI		PINB, PB5
-0003a0 27bb                      	CLR		R27
+0003a2 95b3                      	INC		R27
+0003a3 30ba                      	CPI		R27, 10
+0003a4 f411                      	BRNE	FIN_ISR2
+0003a5 9a1d                      	SBI		PINB, PB5
+0003a6 27bb                      	CLR		R27
                                  
                                  FIN_ISR2:
-0003a1 910f                      	POP		R16
-0003a2 bf0f                      	OUT		SREG, R16
-0003a3 910f                      	POP		R16
+0003a7 910f                      	POP		R16
+0003a8 bf0f                      	OUT		SREG, R16
+0003a9 910f                      	POP		R16
 
 
 RESOURCE USE INFORMATION
@@ -2212,7 +2218,7 @@ andi  :   1 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0
 brcc  :   0 brcs  :   0 break :   0 breq  :  68 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   1 brlt  :   0 brmi  :   0 
 brne  :   9 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :  33 cbi   :  63 cbr   :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :  33 cbi   :  67 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   1 cln   :   0 clr   : 107 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   7 cpc   :   0 
 cpi   :  71 cpse  :   0 dec   :  15 eor   :   0 fmul  :   0 fmuls :   0 
@@ -2221,7 +2227,7 @@ ld    :   0 ldd   :   0 ldi   :  95 lds   :   0 lpm   :  34 lsl   :   8
 lsr   :   0 mov   :  63 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  25 pop   :   8 
 push  :   8 rcall :   0 ret   :  66 reti  :   4 rjmp  :  33 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :  36 sbic  :   0 sbis  :  15 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :  38 sbic  :   0 sbis  :  15 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :  19 
@@ -2231,7 +2237,7 @@ Instructions used: 30 out of 113 (26.5%)
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00074a   1796     22   1818   32768   5.5%
+[.cseg] 0x000000 0x000756   1808     22   1830   32768   5.6%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

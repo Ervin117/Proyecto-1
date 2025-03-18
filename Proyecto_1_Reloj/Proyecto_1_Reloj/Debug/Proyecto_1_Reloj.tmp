@@ -24,14 +24,14 @@
  </OUTPUT_FILES>
  <LABELS>
   <START><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>37</LINE></START>
-  <BOTONES><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1058</LINE></BOTONES>
-  <LEDS1><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1126</LINE></LEDS1>
-  <RELOJ_7SEG><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>894</LINE></RELOJ_7SEG>
-  <TNSTR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1032</LINE></TNSTR>
+  <BOTONES><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1064</LINE></BOTONES>
+  <LEDS1><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1132</LINE></LEDS1>
+  <RELOJ_7SEG><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>900</LINE></RELOJ_7SEG>
+  <TNSTR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1038</LINE></TNSTR>
   <TABLA7SEG><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>31</LINE></TABLA7SEG>
   <MES_DIA><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>33</LINE></MES_DIA>
   <SETUP><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>44</LINE></SETUP>
-  <INICIO><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>884</LINE></INICIO>
+  <INICIO><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>890</LINE></INICIO>
   <MAIN><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>164</LINE></MAIN>
   <CALL_HRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>187</LINE></CALL_HRS>
   <CALL_FCH><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>193</LINE></CALL_FCH>
@@ -94,7 +94,7 @@
   <UNDER_MES><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>670</LINE></UNDER_MES>
   <INCREMET_ALR_MIN><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>689</LINE></INCREMET_ALR_MIN>
   <DECREMENT_ALR_MIN><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>711</LINE></DECREMENT_ALR_MIN>
-  <MILTIPLEX_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>817</LINE></MILTIPLEX_ALR>
+  <MILTIPLEX_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>823</LINE></MILTIPLEX_ALR>
   <DEC_MIN_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>696</LINE></DEC_MIN_ALR>
   <OVER_MIN_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>704</LINE></OVER_MIN_ALR>
   <DEC_REST_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>718</LINE></DEC_REST_ALR>
@@ -107,34 +107,34 @@
   <DEC_HRS_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>780</LINE></DEC_HRS_ALR>
   <UNDER_HRS_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>788</LINE></UNDER_HRS_ALR>
   <ACTIVAR_ALAR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>805</LINE></ACTIVAR_ALAR>
-  <DESACTIVAR_ALAR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>808</LINE></DESACTIVAR_ALAR>
-  <DIS1_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>828</LINE></DIS1_ALR>
-  <DIS2_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>842</LINE></DIS2_ALR>
-  <DIS3_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>856</LINE></DIS3_ALR>
-  <DIS4_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>870</LINE></DIS4_ALR>
-  <REGRESO><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>926</LINE></REGRESO>
-  <RESET_HRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>935</LINE></RESET_HRS>
-  <INC_DECHRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>929</LINE></INC_DECHRS>
-  <FIN1><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1024</LINE></FIN1>
-  <SUM_DIA><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>941</LINE></SUM_DIA>
-  <INC_UMES><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>975</LINE></INC_UMES>
-  <SUM_DECDIA><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>959</LINE></SUM_DECDIA>
-  <A_MES><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1004</LINE></A_MES>
-  <INC_DECMES><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>993</LINE></INC_DECMES>
-  <RESET_TOTAL><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1010</LINE></RESET_TOTAL>
-  <OVER><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1047</LINE></OVER>
-  <FIN2><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1050</LINE></FIN2>
-  <MODOS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1071</LINE></MODOS>
-  <FIN3><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1118</LINE></FIN3>
-  <HRS_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1091</LINE></HRS_IRS>
-  <FCH_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1094</LINE></FCH_IRS>
-  <CONF_HRS_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1097</LINE></CONF_HRS_IRS>
-  <CONF_MIN_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1100</LINE></CONF_MIN_IRS>
-  <CONF_MES_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1106</LINE></CONF_MES_IRS>
-  <CONF_DIS_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1103</LINE></CONF_DIS_IRS>
-  <CONF_MIN_ALR_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1109</LINE></CONF_MIN_ALR_IRS>
-  <CONF_HRS_ALR_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1112</LINE></CONF_HRS_ALR_IRS>
-  <APG_ALR_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1115</LINE></APG_ALR_IRS>
-  <FIN_ISR2><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1141</LINE></FIN_ISR2>
+  <DESACTIVAR_ALAR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>811</LINE></DESACTIVAR_ALAR>
+  <DIS1_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>834</LINE></DIS1_ALR>
+  <DIS2_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>848</LINE></DIS2_ALR>
+  <DIS3_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>862</LINE></DIS3_ALR>
+  <DIS4_ALR><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>876</LINE></DIS4_ALR>
+  <REGRESO><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>932</LINE></REGRESO>
+  <RESET_HRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>941</LINE></RESET_HRS>
+  <INC_DECHRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>935</LINE></INC_DECHRS>
+  <FIN1><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1030</LINE></FIN1>
+  <SUM_DIA><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>947</LINE></SUM_DIA>
+  <INC_UMES><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>981</LINE></INC_UMES>
+  <SUM_DECDIA><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>965</LINE></SUM_DECDIA>
+  <A_MES><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1010</LINE></A_MES>
+  <INC_DECMES><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>999</LINE></INC_DECMES>
+  <RESET_TOTAL><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1016</LINE></RESET_TOTAL>
+  <OVER><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1053</LINE></OVER>
+  <FIN2><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1056</LINE></FIN2>
+  <MODOS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1077</LINE></MODOS>
+  <FIN3><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1124</LINE></FIN3>
+  <HRS_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1097</LINE></HRS_IRS>
+  <FCH_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1100</LINE></FCH_IRS>
+  <CONF_HRS_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1103</LINE></CONF_HRS_IRS>
+  <CONF_MIN_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1106</LINE></CONF_MIN_IRS>
+  <CONF_MES_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1112</LINE></CONF_MES_IRS>
+  <CONF_DIS_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1109</LINE></CONF_DIS_IRS>
+  <CONF_MIN_ALR_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1115</LINE></CONF_MIN_ALR_IRS>
+  <CONF_HRS_ALR_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1118</LINE></CONF_HRS_ALR_IRS>
+  <APG_ALR_IRS><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1121</LINE></APG_ALR_IRS>
+  <FIN_ISR2><FILE>C:\Users\razer\OneDrive\Documentos\GitHub\Proyecto-1\Proyecto_1_Reloj\Proyecto_1_Reloj\main.asm</FILE><LINE>1147</LINE></FIN_ISR2>
  </LABELS>
 </ASSEMBLER_INFO>
